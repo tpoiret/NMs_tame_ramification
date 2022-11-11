@@ -1,0 +1,503 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc} 
+\usepackage[T1]{fontenc}     
+
+\usepackage{tikz-cd}
+\usepackage{enumitem}
+\usepackage{mathtools, bm}
+\usepackage{amssymb, bm}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{hyperref}
+\usepackage{stmaryrd}
+\usepackage{ mathrsfs }
+\usepackage[french]{algorithm2e}
+\usepackage[all]{xy}
+\usepackage{scalerel,stackengine}
+
+\usepackage{tkz-graph}
+\GraphInit[vstyle = normal]
+\tikzset{
+  LabelStyle/.style = { rectangle, rounded corners, draw,
+                        minimum width = 2em, fill = white, font = \bfseries },
+  VertexStyle/.append style = { inner sep=5pt,
+                                font = \Large\bfseries},
+  EdgeStyle/.append style = {bend left} }
+\thispagestyle{empty}
+
+\stackMath
+\newcommand\reallywidehat[1]{%
+	\savestack{\tmpbox}{\stretchto{%
+			\scaleto{%
+				\scalerel*[\widthof{\ensuremath{#1}}]{\kern-.6pt\bigwedge\kern-.6pt}%
+				{\rule[-\textheight/2]{1ex}{\textheight}}%WIDTH-LIMITED BIG WEDGE
+			}{\textheight}% 
+		}{0.5ex}}%
+	\stackon[1pt]{#1}{\tmpbox}%
+}
+\parskip 1ex
+
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\C}{\mathbb{C}}
+
+\SetKwInOut{Input}{Entrée}
+\SetKwInOut{Output}{Sortie}
+\SetKwComment{Comment}{}{}
+\newcommand{\mycmtsty}[1]{\em \small #1}
+\SetCommentSty{mycmtsty}
+\renewcommand{\O}{\mathcal{O}}
+\renewcommand{\L}{\mathfrak{L}}
+\renewcommand{\S}{\mathcal{S}}
+\newcommand{\F}{\mathfrak{F}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\m}{\mathfrak{m}}
+\newcommand{\n}{\mathfrak{n}}
+\newcommand{\p}{\mathfrak{p}}
+\newcommand{\q}{\mathfrak{q}}
+\DeclareMathOperator{\spec}{Spec}
+\DeclareMathOperator{\pic}{Pic}
+\DeclareMathOperator{\res}{Res}
+\DeclareMathOperator{\clo}{clo}
+\DeclareMathOperator{\sing}{Sing}
+\DeclareMathOperator{\divi}{Div}
+\DeclareMathOperator{\lcm}{lcm}
+\DeclareMathOperator{\Frac}{Frac}
+\DeclareMathOperator{\sch}{Sch}
+\DeclareMathOperator{\set}{Set}
+\DeclareMathOperator{\sets}{Sets}
+\DeclareMathOperator{\rad}{rad}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\Ho}{H}
+\DeclareMathOperator{\length}{length}
+\DeclareMathOperator{\codim}{codim}
+\DeclareMathOperator{\Id}{Id}
+\DeclareMathOperator{\green}{Green}
+\DeclareMathOperator{\lie}{Lie}
+\DeclareMathOperator{\gr}{Gr}
+\DeclareMathOperator{\T}{T}
+\DeclareMathOperator{\supe}{sup}
+\DeclareMathOperator{\gal}{Gal}
+\DeclareMathOperator{\rest}{Res}
+
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{prop}[thm]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{defi}[thm]{Definition}
+
+\theoremstyle{remark}
+\newtheorem{rem}{Remark}[thm]
+\newtheorem{ex}[thm]{Example}
+
+\begin{document}
+\title{}
+\author{Thibault Poiret}
+%\maketitle
+
+
+\section{Introduction}
+
+	Given an open immersion $U\subset S$ and a smooth algebraic space over $U$, we can sometimes get informations about the N\'eron model of this space (existence, nonexistence, explicit construction if it exists) only after base-change to some finite extension $S'/S$. Examples include smooth curves acquiring nodal reduction over $S'$, Jacobians of smooth curves acquiring nodal reduction, and to some extent abelian varieties acquiring semi-abelian reduction \cite{me&G-dog} \emph{add citations}. Therefore, it is interesting to have tools to turn this into information on the N\'eron model over $S$. 	
+In \cite{TameRamification}, one studies the base-change behavior of N\'eron models of abelian varieties over discrete valuation rings along finite tamely ramified extensions. We are interested in what happens when the base is higher-dimensional. The first complication appearing in this setting is that existence of N\'eron models is no longer guaranteed. We address this problem by proving
+\begin{thm}[theorem \ref{theorem the neron model descends}]
+Let $S'\longrightarrow S$ be a finite, locally free, tamely ramified map between regular schemes and $U$ the complement of a strict normal crossings divisor $D\longrightarrow S$. Suppose $U':=U\times_S S'$ is \'etale over $U$.
+
+Let $X_U$ be a smooth $U$-algebraic space, such that $X_U\times_U U'$ has a $S'$-N\'eron model $X'$. Then the schematic closure of $X_U$ in $\prod\limits_{S'/S}X'$ is a $S$-N\'eron model for $X_U$ (where $X_U$ maps to $\prod\limits_{S'/S}X'$ as in example \ref{exemple Restriction de Weil d'un objet obtenu par changement de base}).
+
+Moreover, if $S'\longrightarrow S$ is Galois for the right-action of a finite group $G$, then $G$ acts on $X'$ via its action on $S'$: it follows that $G$ acts on $\prod\limits_{S'/S}X'$ as in remark \ref{remark G acts on the restriction}. In that case, the N\'eron model of $X_U$ is $(\prod\limits_{S'/S}X')^G$.
+\end{thm}
+Then, when the N\'eron models $N$ and $N'$ exist, we introduce filtrations of certain strata of $N$ (quite similar to the filtration of the closed fiber described in \cite{TameRamification}), and explicit the successive quotients of these filtrations in terms of $N'$. Namely, after reducing to its hypotheses by working \'etale-locally on the base (see lemma \ref{lemme local-global}), we prove the following result:
+\begin{thm}[theorem \ref{theorem filtration around a point}]
+Let $S=\spec R$ be a regular affine scheme, $f_1,...,f_r$ regular parameters of $R$, $R'=R[T_1,...,T_r]/(T_j^{n_j}-f_j)$, where the $n_j$ are invertible on $S$, and let $S'=\spec R'$. Suppose $R$ contains the group $\mu_{n_j}$ of $n_j$-th roots of unity for all $j$. Let $U$ be the locus in $S$ where all $f_j$ are invertible, and $Z$ the locus where all $f_j$ vanish. Let $X_U$ be a proper smooth $U$-group algebraic space with a N\'eron model $N'$ over $S'$. Then $X_U$ has a N\'eron model $N$ over $S$, and we have sub-$Z$-group spaces $(F^d N_Z)_{d\in\N}$ of $N_Z$ (see definitions \ref{definition F^d N'} and \ref{definition F^d N}) such that:
+\begin{itemize}
+\item For all $d\in\N$, $F^d N_Z\subset F^{d+1} N_Z$.
+\item $F^0 N_Z=N_Z$.
+\item If $d>\prod\limits_{j=1}^r (n_j-1)$ then $F^d N_Z=0$.
+\item $F^0 N_Z/F^1 N_Z$ is the subspace of $N'_Z$ invariant under the action of $G=\prod\limits_{j=1}^r \mu_j$, where $(\xi_j)_{1\leq j\leq r}$ acts by multiplying $T_j$ by $\xi_j$.
+\item If $d>0$, $F^d N_Z/F^{d+1} N_Z$ is isomorphic (via the isomorphism of proposition \ref{proposition les quotients de F^d N' sont des algebres de Lie}) to the disjoint union $\coprod\limits_\mathbf{k}\lie_{N'_Z/Z}[\mathbf{k}]$ where $\mathbf{k}$ ranges through all $r$-uples of integers $(k_1,...,k_r)$ with $\sum\limits_{j=1}^r k_j=d$ and $k_j<n_j$ for all $j$, and $\lie_{N'_Z/Z}[\mathbf{k}]$ is the subspace of $\lie_{N'_Z/Z}$ where all $(\xi_j)_{1\leq j\leq r}$ in $G$ act by multiplication by $\prod\limits_{j=1}^r \xi_j^{k_j}$.
+\end{itemize}
+\end{thm}
+
+
+	
+	\subsection{N\'eron models}
+	Here we give our definition of N\'eron models and mention some elementary properties.
+\begin{defi}
+Let $S$ be a scheme, $U\subset S$ a schematically dense open subscheme and $X_U/U$ an $U$-algebraic space. We call \emph{$S$-N\'eron model of $X_U$} (or just \emph{N\'eron model of $X_U$} if there is no ambiguity) a model $N/S$ of $X_U$ such that for every smooth $S$-algebraic space $Y$, the canonical map
+\[
+\Hom_S(Y,N)\longrightarrow\Hom_U(Y_U,X_U)
+\]
+is bijective.
+\end{defi}
+
+\begin{rem}\label{remarque proprietes des NM}
+\begin{itemize}
+\item If $X/S$ is a separated model of $X_U/U$, then  for any smooth $Y/S$, the map $\Hom_S(Y,X)\longrightarrow\Hom_U(Y_U,X_U)$ is automatically injective.
+\item The universal property implies that a N\'eron model, if it exists, is unique up to a unique isomorphism.
+\item One can replace "for every smooth $S$-algebraic space $Y$" by "for every smooth $S$-scheme $Y$" in the definition above.
+\item Let $S'\longrightarrow S$ be a smooth morphism of schemes with $S$ locally Noetherian and reduced and let $U\subset S$ be a schematically dense open. It follows $U':=U\times_S S'$ is also schematically dense and open in $S'$. Consider an algebraic space $X/S$. If $X$ is the $S$-N\'eron model of $X_U$, then $X_{S'}$ is the $S'$-N\'eron model of $X_{U'}$. If $S'\longrightarrow S$ is surjective, the converse also holds.
+\item In general, given a morphism of schemes $S'\longrightarrow S$ with $U\times_S S'$ schematically dense in $S'$ and a $U$-algebraic space $X_U$, if $X_U$ has a $S$-N\'eron model $N$ and $X_{U'}$ has a $S'$-N\'eron model $N'$, then the universal property just gives a \emph{morphism of base change} $N\times_S S'\longrightarrow N'$.
+\item $X$ is the N\'eron model of $X_U$ if and only if for all $s\in S$, $X\times_S\spec(\O_{S,s}^{sh})$ is the N\'eron model of its restriction to $U$, where we note $R^{sh}$ a strict henselization of a ring $R$.
+\end{itemize}
+\end{rem}
+
+\cite{aaa} \emph{add references to make this into an article, delete and refer to previous chapters for the thesis}
+
+
+
+	\subsection{Weil restriction}
+	
+	As in \cite{TameRamification}, we introduce the Weil restriction functor and give some well-known representability properties.
+	
+\begin{defi}
+Let $S'/S$ be a morphism of schemes, and $X'$ a contravariant functor from $(\sch/S')$ to $(\sets)$. We call \emph{Weil restriction} of $X'/S'$ to $S$, and we note $\prod\limits_{S'/S}X'$, the contravariant functor from $(\sch/S)$ to $(\sets)$ sending $T\longrightarrow S$ to $X'(T\times_S S')$. If $S=\spec R$ and $S'=\spec R'$ are affine, we will sometimes write $\prod\limits_{R'/R} X$.
+\end{defi}
+
+\begin{rem}
+Given a Grothendieck topology on $(\sch/S)$, inducing one on $(\sch/S')$, the Weil restriction of a presheaf $X':(\sch/S)^{op}\longrightarrow\sets$ to $S$ is just its pushforward to $(\sch/S)$.
+\end{rem}
+
+\begin{prop}\label{prop representabilite de la restriction de Weil}
+If $S'\longrightarrow S$ is a flat and proper morphism of schemes, and $X'$ is a quasi-projective $S$-algebraic space with $X'/S$ factoring through $S'$, then $\prod\limits_{S'/S}X'$ is (representable by) an algebraic space. If in addition $X'$ is a scheme, then $\prod\limits_{S'/S}X'$ is a scheme.
+\end{prop}
+
+\begin{proof}
+Applying the remark above to the \'etale topology, we reduce to the case where $X$ is a scheme. This is then done in \cite{Bourbaki221}, 4.c.
+\end{proof}
+
+\begin{ex}\label{exemple Restriction de Weil d'un objet obtenu par changement de base}
+Let $S'\longrightarrow S$ be a morphism of schemes and $Y/S$ be an $S$-algebraic space. Let $Y'$ be the $S'$-space $Y\times_S S'$. Then for all $T/S$ we have $\Hom_S(T,\prod\limits_{S'/S}Y')=\Hom_{S'}(T\times_S S',Y')=\Hom_S(T\times_S S',Y)$. In particular, there is a natural map $Y\longrightarrow\prod\limits_{S'/S}Y'$.
+\end{ex}
+
+\begin{prop}\label{prop lissite de la restriction de Weil}
+If $S'\longrightarrow S$ is a flat and finite morphism of schemes, and $X'$ is a smooth quasi-projective $S'$-algebraic space, then $\prod\limits_{S'/S}X'$ is smooth over $S$.
+\end{prop}
+
+\begin{proof}
+The formation of $\prod\limits_{S'/S}X'$ is \'etale-local on both $X'$ and $S$, so we can assume $X'=\spec A'$ and $S=\spec R$ are affine schemes. Then $S'=\spec R'$ is affine, with $R'/R$ finite and flat, and $\prod\limits_{S'/S}X'$ is a scheme by proposition \ref{prop representabilite de la restriction de Weil}. By hypothesis, $R'\longrightarrow A'$ is formally smooth and locally of finite presentation. But then $\prod\limits_{S'/S}X'/S$ is also formally smooth, and it follows from \cite{EGA4.3}, proposition 8.14.2, that it is locally of finite presentation aswell.
+\end{proof}
+
+\begin{rem}\label{remark G acts on the restriction}
+Suppose given equivariant right-actions of a group $G$ on a morphism of schemes $S'\longrightarrow S$ and on a morphism from an algebraic space $X'$ to $S'$. Suppose moreover that $G$ acts trivially on $S$. Then $\prod\limits_{S'/S}X'\longrightarrow S$ carries a natural $G$-action, defined as follows: for any $S$-scheme $T$, define $T':=T\times_S S'$, every $g\in G$ induces an automorphism $\rho_{X'}(g)$ of $X'$ and an automorphism $\rho_{T'}(g)$ of $T'$ (obtained by extending the automorphism on $S'$ by the identity on $T$). The action takes $f\in\Hom(T,\prod\limits_{S'/S}X')=\Hom(T',X')$ to
+\[
+f.g=\rho_{X'}(g)\circ f\circ\rho_{T}(g)^{-1}
+\]
+When $\prod\limits_{S'/S}X'$ is representable, this action is equivariant.
+\end{rem}
+
+\subsection{Fixed points}
+
+We will show later that under certain hypotheses, we can construct a N\'eron model by considering the Weil restriction of a N\'eron model over a bigger base, and looking at its subspace of fixed points under a Galois action: here we define the functor of fixed points and talk about its representability and eventual smoothness. This is all contained in \cite{TameRamification}, to which we refer for the proofs unless they are short enough.
+
+\begin{defi}
+Let $\pi\colon S'\longrightarrow S$ be a morphism of schemes and $G$ a finite group, acting on the right on $S'$. We say that $\pi$ is a \emph{quotient} for this action, or that $\pi$ is \emph{Galois with group $G$}, if it is affine, and for every affine open subscheme $\spec A\subset S$ of pullback $\spec A'\subset S'$ by $\pi$, $A$ is the subring $A'^G$ of $G$-invariants of $A'$.
+\end{defi}
+
+\begin{defi}
+Let $S$ be a scheme and $X$ an algebraic space. Suppose a group $G$ acts equivariantly on $X\longrightarrow S$ with the trivial action on $S$. We define the \emph{subfunctor of fixed points} $X^G:(\sch/S)^{op}\longrightarrow\sets$ by $X^G(T)=(X(T))^G$.
+\end{defi}
+
+\begin{prop}
+With notations as above, the formation of $X^G$ commutes with base change. Moreover, $X^G$ is a subspace of $X$, closed if $X/S$ is separated.
+\end{prop}
+
+\begin{proof}
+Compatibility with base-change is immediate. Each $g\in G$ gives an automorphism $\rho_X(g)$ of $X$, thus a graph $\Gamma_g:X\longrightarrow X\times_S X$. $\Gamma_g$ is the composition
+\[
+X\xrightarrow{\Delta}X\times_S X\xrightarrow{(p_1,\rho_X(g)\circ p_2)}X\times_S X
+\]
+where $\Delta$ is the diagonal map, and $p_1,p_2$ are the two projections from $X\times_S X$ onto $X$. Since $\rho_X(g)$ is an automorphism of $X$, $(p_1,\rho_X(g)\circ p_2)$ is an automorphism of $X\times_S X$. Moreover, $\Delta$ is an immersion, closed if $X/S$ is separated, so by composition $\Gamma_g$ is an immersion, closed if $X/S$ is separated. Now, call $Z$ the fiber product of all $\Gamma_g$: $Z$ is a subscheme of the diagonal since $\Delta=\Gamma_{0}$. As such, it is a subscheme of $X$, closed if $X/S$ is separated, and it represents $X^G$ since for any $T\longrightarrow S$, $\Hom(T,Z)$ is precisely the set of maps $f:T\longrightarrow X$ such that for all $g\in G$, $\Gamma_g\circ f=\Gamma_0\circ f$, i.e. $f=\rho_X(g)\circ f=f.g$.
+\end{proof}
+
+\begin{prop}\label{prop lissite des points fixes si l'ordre du groupe est inversible}
+With hypotheses and notations as above, if $f:~X\longrightarrow~S$ is smooth and $n:=\#G$ is invertible on $X$, then $X^G\longrightarrow S$ is smooth.
+\end{prop}
+
+\begin{proof}
+This is \cite{TameRamification}, proposition 3.4.
+\end{proof}
+
+\begin{cor}
+Let $G$ be a finite group acting equivariantly on a smooth morphism of algebraic spaces $X\longrightarrow S$. If $\#G$ is invertible on $X$, then $X^G\longrightarrow S^G$ is smooth.
+\end{cor}
+
+
+\subsection{Twisted Lie algebras}
+
+We will make use of a slightly broader than usual notion of tangent space and Lie algebra of a group algebraic space over a base scheme, so we present the definition and a few properties here. These objects are studied in much more detail in \cite{SGA3}.
+
+\begin{defi}
+Let $S$ be a scheme and $X$ a $S$-group algebraic space. Let $\mathcal{M}$ be a free $O_S$-module of finite type. We write $\T_{X/S}(\mathcal{M})$ for the functor $(\sch/S)^{op}\longrightarrow \set$ taking $T/S$ to $\Hom_S(\spec(\O_S\oplus\mathcal{M}),X)$, where the $\O_S$-module $\O_S\oplus\mathcal{M}$ is endowed with the $\O_S$-algebra structure making $\mathcal{M}$ a square-zero ideal. We write $\lie_{X/S}(\mathcal{M})$ for the pullback of $\T_{X/S}(\mathcal{M})$ by the unit section $S\longrightarrow X$. In particular, when $\mathcal{M}=\O_S$, they are the usual tangent bundle and Lie algebra of $X$ over $S$, that we write $\T_{X/S}$ and $\lie_{X/S}$.
+\end{defi}
+
+\begin{prop}
+With hypotheses and notations as above, $\T_{X/S}(\mathcal{M})$ and $\lie_{X/S}(\mathcal{M})$ are representable by group $S$-algebraic spaces, and the canonical morphisms
+\[
+\lie_{X/S}(\mathcal{M})\longrightarrow\T_{X/S}(\mathcal{M})\longrightarrow X
+\]
+are morphisms of $S$-groups.
+\end{prop}
+
+\begin{proof}
+Representability when $X$ is a scheme is \cite{SGA3}, exposé 2, proposition 3.3. The case of algebraic spaces is similar. Existence of the group structure, and the fact the canonical maps respect them, is \cite{SGA3}, exposé 2, corollaire 3.8.1.
+\end{proof}
+
+\begin{prop}
+Let $\Phi\colon \O_S^{\oplus n}\longrightarrow\mathcal{M}$ be an isomorphism, $\Phi$ naturally induces isomorphisms $T_{X/S}(\mathcal{M})=\coprod\limits_{i=1}^n T_{X/S}$ and $\lie_{X/S}(\mathcal{M})=\coprod\limits_{i=1}^n \lie_{X/S}$
+\end{prop}
+
+\begin{proof}
+The $\O_S$-algebra $\O_S\oplus\mathcal{M}$ (where $\mathcal{M}$ is a square-zero ideal) can be identified via $\Phi$ to the tensor product of $n$ copies of $\O_S\oplus\mathcal{I}$, where $\mathcal{I}$ is a square-zero ideal, isomorphic to $\O_S$ as a $\O_S$-module. The rest follows from the definitions.
+\end{proof}
+
+\begin{rem}
+This identification is only canonical up to the choice of a basis for $\mathcal{M}$.
+\end{rem}
+
+
+
+\section{The morphism of base-change for tame extensions}
+
+\subsection{Compatibility with Weil restrictions}
+
+In this section, $S'\longrightarrow S$ will be a finite locally free morphism of schemes, $X'/S'$ an algebraic space, $U$ a schematically dense open subscheme of $S$, and $U'=U\times_S S'$. Note that $U'$ is schematically dense in $S'$ by \cite{EGA4.3}, théorème 11.10.5.
+
+\begin{defi}
+Let $t$ be a generic point of $S\backslash U$. $t$ is of codimension $1$ in $S$ so $\O_{S,t}$ is a discrete valuation ring. We call \emph{ramification index of $S'/S$ at $t$} the ppcm of ramification indexes of the discrete valuation ring map $\O_{S,t}\longrightarrow \O_{S',t'}$ for all $t'\in S'$ of image $t$. Let $\mathbf{t}=(t_1,...,t_r)$ be a $r$-uple of generic points of $S\backslash U$, we call \emph{ramification index of $S'/S$ at $\mathbf{t}$} the $r$-uple $(n_1,...,n_r)$, where $n_i$ is the ramification index of $S'/S$ at $t_i$ for all $i$.
+\end{defi}
+
+\begin{prop}[see \cite{TameRamification}, proposition 4.1]
+Let $X'$ be a smooth quasi-projective $S'$-algebraic space. Suppose $X'$ is the $S'$-N\'eron model of $X'_{U'}$. Then $\prod\limits_{S'/S}(X')$ is the $S$-N\'eron model of $\prod\limits_{U'/U}(X'_{U'})$.
+\end{prop}
+
+\begin{proof}
+$\prod\limits_{S'/S}(X')$ is smooth and separated over $S$ by \ref{prop lissite de la restriction de Weil} and, if $Y$ is a smooth $S$-algebraic space, then
+\begin{align*}
+\Hom(Y,\prod\limits_{S'/S}(X'))&=\Hom(Y',X')\\
+&=\Hom(Y'_{U'},X'_{U'})\\
+&=\Hom({Y_U,\prod\limits_{U'/U}(X'_{U'})})
+\end{align*}
+where $Y'$ denotes the base-change $Y\times_S S'$.
+\end{proof}
+
+\begin{prop}[Abhyankar's lemma]\label{proposition lemme d'abhyankhar}
+Let $S=\spec R$ be a local scheme and $S'\longrightarrow S$ a finite locally free tamely ramified morphism of schemes, \'etale over the complement $U$ of a strict normal crossings divisor $D$ of $S$. Let $(f_1,...,f_r)$ be part of a regular system of parameters of $R$ such that $D=\divi(f_1...f_r)$. Then there are integers $n_1,...,n_r$, prime to the residue characteristic of $R$, such that if $\tilde{S}=\spec R[T_1,...,T_r]/(T_i^{n_i}-f_i)_{1\leq i\leq r}$, the morphism $S'\times_S\tilde{S}\longrightarrow\tilde{S}$ is \'etale.
+\end{prop}
+
+\begin{proof}
+This is a consequence of \cite{SGA1}, exposé XIII, proposition 5.2.
+\end{proof}
+
+\begin{prop}\label{proposition tamely ramified maps etale-locally only add roots}
+Under the hypotheses of proposition \ref{proposition lemme d'abhyankhar}, suppose $S'$ is connected and $S$ contains all $k$-th roots of unity for all $k$ prime to the residue characteristic $p$ of $S$ (e.g. $S$ is strictly local). Then there are integers $n_1,...,n_r$, prime to $p$, such that $S'=\spec R[T_1...,T_r]/(T_i^{n_i}-f_i)$
+\end{prop}
+
+
+\begin{proof}
+By proposition \ref{proposition lemme d'abhyankhar}, there are integers $m_1,...,m_r$ prime to $p$, such that $S'$ is a quotient of $\tilde{S}=\spec\tilde{R}$, where
+\[
+\tilde{R}=R[T_1,...,T_r]/(T_i^{m_i}-f_i)_{1\leq i\leq r}
+\]
+But the group of $S$-automorphisms of $\tilde{S}$ is the product $\prod\limits_{i=1}^r \mu_{m_i}$ of the groups $\mu_{m_i}$ of $m_i$-th roots of unity of $R$ (where $\xi\in\mu_{m_i}$ acts by sending $T_i$ to $\xi T_i$). Since $S'$ is regular, $\tilde{R}^G$ must be regular (and a fortiori locally factorial), so the subgroup $G$ of $S'$-automorphisms of $\tilde{S}$ is of the form $<\xi_1,\xi_2,...,\xi_r>$ with $\xi_i\in\mu_{m_i}$. Therefore, $\prod\limits_{i=1}^r \mu_{m_i}/G$ is a product of quotients of the $\mu_{m_i}$, i.e. there are integers $n_1,...,n_r$ such that $n_i$ divides $m_i$ for all $i$ and $S'$ itself is of the form $\spec R[T_1,...,T_r]/(T_i^{n_i}-f_i)_{1\leq i\leq r}$.
+\end{proof}
+
+\begin{rem}
+The integer $n_i$ is the ramification index of $S'/S$ at the generic point of $\{f_i=0\}$ in $S$.
+\end{rem}
+
+\begin{rem}
+This proof means that, \'etale-locally on $S$, a finite tamely ramified morphism either does nothing more than adding roots to regular parameters, or must break local factoriality of the base. Since in many practical situations, the behavior of N\'eron models is only well-known over (at least) locally factorial bases, we will only be considering the "adding roots" case. For the same reason, we always take $D$ to be strict: indeed, suppose $D$ is a (non-strict) normal crossings divisor, and suppose there is an \'etale morphism $\tilde{S}\longrightarrow S$ and an irreducible component $D_0$ of $D$ which breaks into multiple irreducible components in $\tilde{S}$, then no extension $S'/S$ with ramification index $>1$ over the generic point of $D_0$ can be locally factorial.
+\end{rem}
+
+
+\begin{thm}[see \cite{TameRamification}, theorem 4.2]\label{theorem the neron model descends}
+Let $S'\longrightarrow S$ be a finite, locally free, tamely ramified map between regular schemes and $U$ the complement of a strict normal crossings divisor $D\longrightarrow S$. Suppose $U':=U\times_S S'$ is \'etale over $U$.
+
+Let $X_U$ be a smooth $U$-algebraic space, such that $X_U\times_U U'$ has a $S'$-N\'eron model $X'$. Then the schematic closure of $X_U$ in $\prod\limits_{S'/S}X'$ is a $S$-N\'eron model for $X_U$ (where $X_U$ maps to $\prod\limits_{S'/S}X'$ as in example \ref{exemple Restriction de Weil d'un objet obtenu par changement de base}).
+
+Moreover, if $S'\longrightarrow S$ is Galois for the right-action of a finite group $G$, then $G$ acts on $X'$ via its action on $S'$: it follows that $G$ acts on $\prod\limits_{S'/S}X'$ as in remark \ref{remark G acts on the restriction}. In that case, the N\'eron model of $X_U$ is $(\prod\limits_{S'/S}X')^G$.
+\end{thm}
+
+
+\begin{proof}
+We can assume $S=\spec R$ is strictly local and $S'$ is connected, in which case proposition \ref{proposition tamely ramified maps etale-locally only add roots} shows that $S'\longrightarrow S$ is Galois for the action of a finite group $G$. Call $Z$ the restriction $\prod\limits_{S'/S}(X')$ and $N$ the schematic closure of $X_U$ in $Z$. We will show that $N$ is the N\'eron model of $X_U$, and that $N=Z^G$.
+
+Let $Y$ be a smooth $S$-algebraic space with a map $f_U\colon Y_U\longrightarrow X_U$. Call $Y'$ the base-change $Y\times_S S'$. The map $Y'_{U'}\longrightarrow X'_{U'}$ obtained by base-change extends uniquely to a map $Y'\longrightarrow X'$, which induces a map $Y\longrightarrow Z$ extending $f_U$. By definition of the schematic closure, this factors through a map $f\colon~Y\longrightarrow~N$ extending $f_U$.
+
+$N$ is separated since $Z$ is. We will now show that $N_U=X_U$, that $Z^G$ is smooth over $S$, and that $N=Z^G$.
+
+$G$ acts on $Z_U=\prod\limits_{U'/U}X_{U'}$ via its right-action on $U'$, and $U'\longrightarrow U$ is a quotient for the latter. We have a pullback diagram of algebraic spaces
+\[
+\xymatrix{
+X'_{U'}\ar[r]\ar[d]&X_U\ar[d]\\
+U'\ar[r]&U
+}
+\]
+where both horizontal arrows are quotients for the action of $G$. We will show $X_U=Z_U^G$, which can be checked Zariski-locally: let $V$ be an affine open subscheme of $U$, $V'=\spec A$ its pullback to $U'$, $X_0$ an affine open of $X_U$ with image contained in $V$ and $X_0'=\spec B$ its pullback to $X'_{U'}$. We have $V=\spec(A^G)$ and $X_0=\spec(B^G)$, and there is a pushout diagram of rings
+\[
+\xymatrix{
+B&B^G\ar[l]\\
+A\ar[u]&A^G\ar[u]\ar[l]
+}
+\]
+Let $W$ be the Weil restriction of $X_0'$ to $V$. Then we see that $W=\spec R$ is affine, and for any $A^G$-algebra $C$, we have $\Hom_{A^G}(R,C)=\Hom_A(B,C\otimes_{A^G}A)$. But the $G$-invariant $A$-maps from $B$ to $C\otimes_{A^G}A$ are precisely those lying in the image of $\Hom_{A^G}(B^G,C)$. Therefore $W^G=\spec(B^G)$, and it follows from the sheaf property that $(Z_U)^G=X_U$. Hence, $X_U\longrightarrow Z_U$ is a closed immersion and $N_U=X_U$.
+
+As seen in proposition \ref{proposition tamely ramified maps etale-locally only add roots}, $\#G$ is prime to the residue characteristic of $R$, so by proposition \ref{prop lissite des points fixes si l'ordre du groupe est inversible}, $Z^G$ is $S$-smooth.
+
+The only point remaining to prove is $N=Z^G$, which follows from observing that $Z^G\longrightarrow Z$ is a closed immersion through which $X_U$ factors, so $N\longrightarrow Z$ factors through a closed immersion $N\longrightarrow Z^G$. But $Z^G$ is $S$-smooth, hence $S$-flat, so $Z_U^G=X_U$ is schematically dense in $Z^G$ by \cite{EGA4.3}, théorème 11.10.5, which means $N$ is schematically dense in $Z^G$ and $N\longrightarrow Z^G$ is an isomorphism.
+\end{proof}
+
+
+
+\subsection{A filtration of the N\'eron model over the canonical stratification}
+By remark \ref{remarque proprietes des NM}, N\'eron models can always be described over an \'etale covering of the base. Therefore, in this section, unless mentioned otherwise, we will work assuming that $S=\spec R$ is an affine regular connected scheme, that $R$ contains all roots of unity of order invertible on $S$, that $D$ is a strict normal crossings divisor on $S$ cut out by regular parameters $f_1,...,f_r$ of $R$, and that $S'=\spec R'$ with $R'=R[T_1,...,T_r]/(T_j^{n_j}-f_j)_{1\leq j\leq r}$. Note that in our previous setting (where $S'\longrightarrow S$ was a finite, locally free and tamely ramified morphism between regular schemes, \'etale over the complement of a strict normal crossings divisor), all these assumptions hold in an \'etale neighbourhood of any given point of $S$.
+
+We put $A=R/(f_j)_{1\leq j\leq r}$ and $A'=A\otimes_R R'=A[T_1,...,T_r]/(T_j^{n_j})_{1\leq j\leq r}$. The closed subscheme $Z=\spec A$ of $S$ is the closed stratum of $D$. We let $X_U$ be a proper and smooth $U$-group space with a N\'eron model $N'$ over $S'$. It follows from theorem \ref{theorem the neron model descends} that $X_U$ has a $S$-N\'eron model $N$, and that $N$ is the subspace of $G$-invariants of the Weil restriction of $N'$ to $S$, where the action of $G=\prod\limits_{j=1}^r \mu_{n_j}$ on $S'$ is given by multiplying $T_j$ by the $j$-th coordinate of an element of $G$.
+
+In \cite{TameRamification}, section 5, when $S$ is a discrete valuation ring, one computes the successive quotients of a filtration of the closed fiber of $N$. We adapt this construction to our context to get a filtration of $N_Z$ and express its successive quotients in terms of $N'$.
+
+For all $d\in\N^*$, we write $\Lambda_d$ the set of monomials of the form $\prod\limits_{j=1}^r T_j^{k_j}$ with $\sum\limits_{j=1}^r k_j=d$ and $k_j<n_j$ for all $j$. The set $A'_d\subset A'$ of homogenous polynomials of degree $d$ in the $T_j$ is a finite free $A$-module with basis $\Lambda_d$.
+
+\begin{defi}\label{definition res^d}
+For $d\in\N^*$, we define a sheaf $\rest^d N'_Z\colon\sch/Z^{op}\longrightarrow\set$ as follows: for any $A$-algebra $C$, we put $\rest^d N'_Z(C)=N'(C\otimes_A A'/(\Lambda_d))$.
+\end{defi}
+
+\begin{rem}
+The functor $\rest^d N'_Z$ is (representable by) the $Z$-algebraic space $\prod\limits_{(A'/(\Lambda_d))/A} N'_{A'/(\Lambda_d)}$. We have $\rest^1 N'_Z=N'_Z$, and for any $d>\prod\limits_{j=1}^r (n_j-1)$, we have $\rest^d N'_Z=\left(\prod\limits_{S'/S}N'\right)\times_S Z$ since $\Lambda_d$ is empty. There are natural maps $\rest^{d+1} N'_Z\longrightarrow\rest^d N'_Z$.
+\end{rem}
+
+\begin{defi}\label{definition F^d N'}
+For $d\in\N^*$, we define $F^d N'_Z$ as the kernel of the canonical morphism $\left(\prod\limits_{S'/S}N'\right)\times_S Z\longrightarrow\rest^d N'_Z$ of $Z$-group spaces. We also put $F^0 N'_Z=\left(\prod\limits_{S'/S}N'\right)\times_S Z$. The $F^d N'_Z$ form a descending filtration of $\left(\prod\limits_{S'/S}N'\right)\times_S Z$ by $Z$-subgroup spaces, stationary at $0$ starting from $d=1+\prod\limits_{j=1}^r (n_j-1)$. We call $\gr^d N'_Z$ the quotient $F^d N'_Z/F^{d+1} N'_Z$.
+\end{defi}
+
+
+\begin{prop}\label{proposition les quotients de F^d N' sont des algebres de Lie}
+We have $\gr^0 N'_Z=N'_Z$, and for any $d\geq 1$, $\gr^d N'_Z$ is canonically isomorphic to $\lie_{N'_Z/Z}(A'_d)=\coprod\limits_{P\in\Lambda_d}\lie_{N'_Z/Z}(PA)$.
+\end{prop}
+
+\begin{proof}
+The proof of \cite{TameRamification}, 5.1. carries over without much change: let $d\geq 1$, and let $C$ be a $A$-algebra. Let $\lambda_1,...,\lambda_k$ be parameters for the formal group of $N'$ over $R'$. An element $a\in F^d N'_Z(C)$ corresponds to a ring map
+\[
+\phi\colon R'[[\lambda_1,...,\lambda_k]]\longrightarrow C[T_1,...,T_r]/(T_j^{n_j})_{1\leq j\leq n}
+\]
+such that for all $1\leq i\leq k$, $\phi(\lambda_i)$ is in the ideal generated by $\Lambda_d$, i.e. is of the form $\sum\limits_{P} a_{i,P} P$ where the $a_{i,P}$ are in $C$ and $P$ runs over all nonzero monomials $\prod\limits_{j=1}^r T^{k_j}$ with $\sum\limits_j k_j\geq d$. Thus, we can associate to $a$ an element of $\lie_{N'_Z/Z}(A_d)(C)$ by truncature, sending $\lambda_i$ to $\sum\limits_{P\in\Lambda_d} a_{i,P} P$. This gives a surjective morphism of $Z$-groups $F^d N'_Z\longrightarrow\lie_{N'_Z/Z}(A_d)$, with kernel $F^{d+1}N'_Z$, so we are done.
+\end{proof}
+
+\begin{prop}\label{proposition G-action and invariants of the Lie algebras}
+If we make $G$ act on $\lie_{N'_Z/Z}(A_d)=\coprod\limits_{P\in\Lambda_d}\lie_{N'_Z/Z}(PA)$ via the isomorphism of proposition \ref{proposition les quotients de F^d N' sont des algebres de Lie}, all the $\lie_{N'_Z/Z}(PA)$ are $G$-stable, and for any $P=\prod\limits_{j=1}^r T_{j}^{k_j}$ in $\Lambda_d$, the bijection $\lie_{N'_Z/Z}(PA)=\lie_{N'_Z/Z}$ induced by $P\mapsto 1$ identifies the subspace $\lie_{N'_Z/Z}(PA)^G$ with the subspace of $\lie_{N'_Z/Z}$ where all $\xi=(\xi_j)_{1\leq j\leq r}$ in $G$ act by multiplication by $\prod\limits_{j=1}^r \xi_j^{k_j}$. We will write this subspace $\lie_{N'_Z/Z}[k_1,...,k_r]$ or $\lie_{N'_Z/Z}[P]$.
+\end{prop}
+
+\begin{proof}
+For any $A$-algebra $C$, the action of $\xi$ on $\Hom(R'[[\lambda_1,...,\lambda_k]],C\otimes_A A')$ makes the following diagram commute:
+\[
+\xymatrix{
+R'[[\lambda_1,...,\lambda_k]]\ar[d]^{\xi}\ar[r]^{\xi.\psi}&C\otimes_A A'\\
+R'[[\lambda_1,...,\lambda_k]]\ar[r]^{\psi}&C\otimes_A A'\ar[u]^{T_j\mapsto\xi_j^{-1}T_j}
+}
+\]
+
+where the map $R'[[\lambda_1,...,\lambda_k]]\xrightarrow{\xi} R'[[\lambda_1,...,\lambda_k]]$ is given by the $G$-action on $N'$. Therefore, the $\lie_{N'_Z/Z}(PA)$ are $G$-stable and the action on $\lie_{N'_Z/Z}(PA)$ for $P=\prod\limits_{j=1}^r T_{j}^{k_j}$ is given by
+\[
+\xymatrix{
+R'[[t_1,...,t_d]]\ar[d]^{\xi}\ar[r]^{\xi.\psi} &C\oplus PC\\
+R'[[t_1,...,t_d]]\ar[r]^{\psi} &C\oplus PC\ar[u]^{P\mapsto\prod\limits_j\xi_j^{-k_j} P}
+}
+\]
+from which the proposition follows.
+\end{proof}
+
+
+\begin{defi}\label{definition F^d N}
+For any integer $d\in\N$, we define $F^d N_Z=(F^d N'_Z)^G$ and $G^d N_Z=F^d N_Z/F^{d+1}N_Z$.
+\end{defi}
+
+\begin{rem}
+The $F^d N_Z$ form a descending filtration of sub-$Z$-group spaces of $N_Z$, with $F^0 N_Z=N_Z$ and $F^d N_Z=0$ when $d>\prod\limits_{j=1}^r (n_j-1)$.
+\end{rem}
+
+\begin{prop}
+For all $d\in\N$, we have $G^d N_Z=(G^d N'_Z)^G$. In particular, $G^0 N_Z=(N'_Z)^G$, and for all $d\geq 1$,  $G^d N_Z=\coprod_{P\in\Lambda_d}\lie_{N'_Z/Z}[P]$ (see proposition \ref{proposition G-action and invariants of the Lie algebras}) via the isomorphism given by the basis $\Lambda_d$ of $A_d$.
+\end{prop}
+
+\begin{proof} (see \cite{TameRamification}, 5.2.)
+The $Z$-group spaces $F^d N'_Z$ are unipotent for $d\geq 1$ and the order of $G$ is invertible on $Z$, so the exact sequence
+\[
+0\longrightarrow F^d N'_Z\longrightarrow F^{d+1} N'_Z\longrightarrow G^d N'_Z\longrightarrow 0
+\]
+remains exact after taking the $G$-invariants.
+\end{proof}
+
+
+%We will now stop looking only at what happens over $Z$. Call $D_1,...,D_r$ the irreducible components of $D$. For $0\leq j\leq r$, we call $U_j$ the complement of $D_j$ in $S$: $U$ is the intersection of the $U_j$. We write $\mathbf{t}=(t_1,...,t_r)$ where $t_j$ is the generic point of $D_j$, and $\mathbf{n}=(n_1,...,n_r)$ the ramification index of $S'\longrightarrow S$ at $\mathbf{t}$. Given two integers $i,j$, we write $\delta_{ij}$ for their Kronecker symbol, taking the value $1$ if $i=j$ and $0$ otherwise. We write $D'_j$ for the irreducible component of $D\times_S S'$ above $D_j$, and we endow it with its reduced structure, so that $D_j\times_S S'=n_j.D'_j$ in $S'$. Note that there is a unique section $D_j\longrightarrow D'_j$.
+
+%\begin{defi}
+%Let $J$ be a subset of $\{1,...,r\}$. We call \emph{stratum of index $J$} of $D$, and write $D_J$, the locally closed subscheme (with reduced structure)
+%\[
+%D_J=\bigcap\limits_{j\in J}D_j\cap\bigcap\limits_{k\notin J}U_k.
+%\]
+%We define similarly locally closed subschemes $D'_J$ of $S'$.
+%\end{defi}
+
+%\begin{rem}
+%The $D_J$ for $J$ in $[[1,r]]$ form a partition of $S$. For $J,J'$ in $\mathcal{P}(r)$, we have $J\subset J'$ if and only if $D_J\subset\overline{D_{J'}}$.
+%\end{rem}
+
+We summarize all this into theorem \ref{theorem filtration around a point} below, and justify its hypotheses by lemma \ref{lemme local-global} and remark \ref{remarque proprietes des NM}.
+
+\begin{lem}\label{lemme local-global}
+Let $S'\longrightarrow S$ be a finite, locally free, morphism between regular connected schemes. Let $D$ be a strict normal crossings divisor of $S$ and $U=S\backslash D$. Suppose $S'\longrightarrow S$ is \'etale over $U$. Let $s$ be a point of $S$, and $D_1,...,D_r$ the irreducible components of $D$ containing $s$. Then there is an affine \'etale neighbourhood $V=\spec R\longrightarrow S$ of $s$ in $S$ such that:
+\begin{itemize}
+\item For all $1\leq j\leq r$, $D_j|_V$ is cut out by a regular parameter $f_j$ of $R$.
+\item There is an isomorphism $V\times_S S'=\spec R[T_1,...,T_r]/(T_j^{n_j}-f_j)$, where $n_j$ is the ramification index of $S'\longrightarrow S$ at the generic point of $D_j$ (in particular, if $S'\longrightarrow S$ is tamely ramified, then $n_j$ is invertible on $R$).
+\item $R$ contains all $n_j$-th roots of unity for all $j$.
+\end{itemize}
+\end{lem}
+
+\begin{proof}
+Immediate from proposition \ref{proposition lemme d'abhyankhar}.
+\end{proof}
+
+
+
+\begin{thm}\label{theorem filtration around a point}
+Let $S=\spec R$ be a regular affine scheme, $f_1,...,f_r$ regular parameters of $R$, $R'=R[T_1,...,T_r]/(T_j^{n_j}-f_j)$, where the $n_j$ are invertible on $S$, and let $S'=\spec R'$. Suppose $R$ contains the group $\mu_{n_j}$ of $n_j$-th roots of unity for all $j$. Let $U$ be the locus in $S$ where all $f_j$ are invertible, and $Z$ the locus where all $f_j$ vanish. Let $X_U$ be a proper smooth $U$-group algebraic space with a N\'eron model $N'$ over $S'$. Then $X_U$ has a N\'eron model $N$ over $S$, and we have sub-$Z$-group spaces $(F^d N_Z)_{d\in\N}$ of $N_Z$ (see definitions \ref{definition F^d N'} and \ref{definition F^d N}) such that:
+\begin{itemize}
+\item For all $d\in\N$, $F^d N_Z\subset F^{d+1} N_Z$.
+\item $F^0 N_Z=N_Z$.
+\item If $d>\prod\limits_{j=1}^r (n_j-1)$ then $F^d N_Z=0$.
+\item $F^0 N_Z/F^1 N_Z$ is the subspace of $N'_Z$ invariant under the action of $G=\prod\limits_{j=1}^r \mu_j$, where $(\xi_j)_{1\leq j\leq r}$ acts by multiplying $T_j$ by $\xi_j$.
+\item If $d>0$, $F^d N_Z/F^{d+1} N_Z$ is isomorphic (via the isomorphism of proposition \ref{proposition les quotients de F^d N' sont des algebres de Lie}) to the disjoint union $\coprod\limits_\mathbf{k}\lie_{N'_Z/Z}[\mathbf{k}]$ where $\mathbf{k}$ ranges through all $r$-uples of integers $(k_1,...,k_r)$ with $\sum\limits_{j=1}^r k_j=d$ and $k_j<n_j$ for all $j$, and $\lie_{N'_Z/Z}[\mathbf{k}]$ is the subspace of $\lie_{N'_Z/Z}$ where all $(\xi_j)_{1\leq j\leq r}$ in $G$ act by multiplication by $\prod\limits_{j=1}^r \xi_j^{k_j}$.
+\end{itemize}
+\end{thm}
+
+
+%\begin{rem}\label{remark filtration par les reels}
+%We do not know if, in general, existence of a N\'eron model for $X_U$ over $S$ implies existence over $S'$ when $S'/S$ if finite, locally free, and tamely and totally ramified. It is true if $X_U$ is the Jacobian of a curve with nodal reduction over $S$ and $S$ is excellent by \cite{myself}. It is also worth noting that the toric-additivity condition of \cite{GiulioMonodromyCriterion} (definition 3.1), which, by \cite{GiulioMonodromyCriterion}, theorem 4.8, is sufficient for existence of a N\'eron model if $S$ is of equicharacteristic $0$ and $X_U$ has semiabelian reduction over $S$, is satisfied over $S$ if and only if it is over $S'$.
+
+%If $X_U$ belongs to one of these categories of $U$-spaces that have a N\'eron model over the regular scheme $S$ if and only if they have one over $S'$ for any finite, locally free, tamely and totally ramified $S'/S$, then, by the preceding remark, as in \cite{TameRamification}, remark 5.4.5, we even have a filtration of $N_Z$ indexed by the whole interval $[0,1]\cap\bigcap\limits_{p\in E}\Z_{(p)}$, where $E$ is the set of prime numbers appearing as the characteristic of a point of $Z$.
+%\end{rem}
+
+%\begin{prop}
+%Let $E=\{p_j\}_{j\in J}$ be the set of prime numbers appearing as the characteristic of a point of $S$, and let $\Q'$ be the set of rational numbers with denominators not divisible by any $p_j$. Suppose $R$ contains all $n$-th roots of unity for all $n$ prime to the $p_j$. Then, in the construction above, $F^i_n N_Z$ only depends on the rational number $x=\frac{i}{n}\in\Q'\cap[0,1[$ (i.e. $F^i_n$ is canonically isomorphic to the piece $F^{mi}_{mn}$ that we obtain by filtering the N\'eron model over $\spec R[T]/(T^{nm}-f)$). Thus, we write $F$
+%\end{prop}
+
+
+%\begin{rem}
+%As in remark \ref{remark filtration par les reels}, if we already know $X_U$ has a N\'eron model over $S'$ for \emph{any} finite, locally free, tamely and totally ramified map $S'/S$ of regular schemes (e.g. $X_U$ is the Jacobian of a smooth $U$-curve with strictly aligned nodal reduction over one such $S'$ by \cite{myself} and \ref{theorem the neron model descends}), then we can merge the information of our filtration given by any such $S'$ into a filtration of $N_{D_J}$ indexed by the real hypercube $(\bigcap\limits_{p\in E}\Z_{(p)}\cap[0,1])^{\#J}$, where $E$ is the set of primes appearing as the characteristic of a point of $D_J$.
+%\end{rem}
+
+\begin{rem}
+Our choice of quotienting by all monomials of the same degree in definition \ref{definition res^d} is somewhat arbitrary, other choices could perharps lead to interesting things aswell.
+\end{rem}
+
+
+ \bibliographystyle{plain}
+\bibliography{biblio}
+
+\end{document}
